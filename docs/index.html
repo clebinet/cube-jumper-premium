@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mirror Infinity - Elite Access</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;900&display=swap');
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Outfit', sans-serif; color: #fff; }
+        
+        #premium-gate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .gate-box {
+            max-width: 600px; padding: 60px; border-radius: 40px;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 229, 255, 0.3);
+            backdrop-filter: blur(20px);
+        }
+        .highlight { color: #00e5ff; font-weight: 900; }
+        .btn-link {
+            display: inline-block; padding: 20px 45px; background: #fff; color: #000;
+            text-decoration: none; border-radius: 100px; font-weight: 900; text-transform: uppercase;
+        }
+        #ui { position: absolute; top: 50px; left: 50px; z-index: 100; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="premium-gate">
+        <div class="gate-box">
+            <h2 style="color:#00e5ff; letter-spacing:10px;">SYNCHRONISATION...</h2>
+            <div id="gate-content">
+                <p id="gate-text">Analyse de la signature Qubit en cours...</p>
+                <div id="lock-controls" style="display:none;">
+                    <p>Accès refusé. Requis : <span class="highlight">100 000 QUBITS</span></p>
+                    <a href="https://clebinet.github.io/cube-jumper-essential" class="btn-link">Obtenir sur Essential</a>
+                    <div style="margin-top: 30px; opacity: 0.4;">VOTRE SCORE : <span id="current-status">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ui">
+        <div style="font-size: 11px; letter-spacing: 4px; color: #666;">INFINITY_SCORE</div>
+        <div id="score" style="font-size: 48px; font-weight: 900;">0</div>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- NETTOYAGE ET DÉTECTION ---
+        const ACCESS_COST = 100000;
+        const KEY = 'qubits_prestige_v2';
+
+        function secureCheck() {
+            // ÉTAPE 1 : On vérifie si la valeur existe. 
+            // Si tu n'as jamais joué à Essential, stored sera 'null'.
+            let stored = localStorage.getItem(KEY);
+            
+            // ÉTAPE 2 : Si la valeur est bizarre ou n'existe pas, on force à 0
+            let userQubits = (stored !== null && !isNaN(stored)) ? parseInt(stored) : 0;
+
+            // ÉTAPE 3 : Mise à jour de l'interface
+            document.getElementById('current-status').innerText = userQubits.toLocaleString();
+            document.getElementById('lock-controls').style.display = 'block';
+            document.getElementById('gate-text').style.display = 'none';
+
+            // ÉTAPE 4 : Décision d'accès
+            if (userQubits >= ACCESS_COST) {
+                document.getElementById('premium-gate').style.display = 'none';
+                document.getElementById('ui').style.display = 'block';
+                startPremiumGame(userQubits);
+            } else {
+                console.log("ACCÈS VERROUILLÉ : " + userQubits + " Qubits.");
+                // On arrête tout traitement ici
+            }
+        }
+
+        // Lancement après un micro-délai pour laisser le stockage se stabiliser
+        setTimeout(secureCheck, 100);
+
+        function startPremiumGame(initialBank) {
+            // Le moteur Three.js ne se lance QUE si secureCheck a validé
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 12);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 2000), new THREE.MeshPhysicalMaterial({ color: 0x050505, roughness: 0 }));
+            floor.rotation.x = -Math.PI / 2;
+            scene.add(floor);
+
+            const player = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.4, 0.8), new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
+            player.position.y = 0.7;
+            scene.add(player);
+
+            const obstacle = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffd700 }));
+            obstacle.position.z = -100;
+            scene.add(obstacle);
+
+            let score = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                obstacle.position.z += 1.0;
+                if(obstacle.position.z > 20) {
+                    obstacle.position.z = -120;
+                    score++;
+                    document.getElementById('score').innerText = score;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
