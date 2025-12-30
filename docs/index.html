@@ -2,156 +2,166 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>cube jumper - Premium Edition - Elite Access</title>
+    <title>Cube Jumper - ELITE PREMIUM</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;900&display=swap');
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Outfit', sans-serif; color: #fff; }
         
-        body::after {
-            content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.9) 100%);
-            pointer-events: none; z-index: 10;
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: #000; 
+            font-family: 'Outfit', sans-serif; 
+            color: #fff; 
         }
 
-        /* UI PREMIUM STYLISÉE */
-        #ui { position: absolute; top: 40px; left: 40px; z-index: 100; display: none; pointer-events: none; }
-        .prestige-tag { color: #ffd700; font-size: 10px; font-weight: 900; letter-spacing: 5px; margin-bottom: 5px; text-shadow: 0 0 10px #ffd700; }
-        .score-big { font-size: 80px; font-weight: 900; line-height: 0.8; margin-bottom: 15px; }
-        .bank-val { color: #00e5ff; font-size: 24px; font-weight: 900; background: rgba(0,229,255,0.1); padding: 5px 15px; border-radius: 50px; display: inline-block; }
+        /* BARRIÈRE DE SÉCURITÉ (GATE) */
+        #gate {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .gate-text { font-size: 10px; letter-spacing: 15px; color: #ffd700; opacity: 0.6; margin-bottom: 20px; }
+        .gate-status { font-size: 24px; font-weight: 100; letter-spacing: 2px; }
 
-        /* GAME OVER */
+        /* UI PREMIUM */
+        #ui { position: absolute; top: 50px; left: 50px; z-index: 100; display: none; }
+        .score-big { font-size: 140px; font-weight: 900; line-height: 0.7; letter-spacing: -8px; text-shadow: 0 0 60px rgba(0,229,255,0.4); }
+        .vault-status { margin-top: 30px; font-size: 14px; letter-spacing: 5px; color: #00e5ff; border-left: 3px solid #00e5ff; padding-left: 20px; }
+
+        /* ÉCRAN GAME OVER */
         #death-screen {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); 
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 5000;
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.98);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 5000; backdrop-filter: blur(15px);
         }
-        .btn-restart {
-            padding: 20px 60px; background: #fff; color: #000; border: none;
-            border-radius: 5px; font-weight: 900; text-transform: uppercase; cursor: pointer;
-            letter-spacing: 3px; transition: 0.4s;
+        .final-score { font-size: 200px; font-weight: 900; letter-spacing: -10px; margin-bottom: 40px; }
+        .restart-btn { 
+            padding: 20px 60px; background: transparent; color: #fff; border: 1px solid #fff; 
+            font-weight: 100; letter-spacing: 10px; cursor: pointer; transition: 0.4s; 
         }
-        .btn-restart:hover { background: #00e5ff; letter-spacing: 6px; }
+        .restart-btn:hover { background: #fff; color: #000; box-shadow: 0 0 50px #fff; }
     </style>
 </head>
 <body>
 
-    <div id="premium-gate" style="position:fixed; inset:0; background:#000; z-index:9999; display:flex; align-items:center; justify-content:center; text-align:center;">
-        <div style="padding:60px; border:1px solid rgba(255,215,0,0.3); border-radius:50px; background:#050505;">
-            <h1 style="color:#ffd700; letter-spacing:15px; font-size: 12px;">PRESTIGE LOCKED</h1>
-            <p style="font-size: 24px; font-weight: 100;">Analyse du Vault...<br><span style="color:#fff; font-weight:900;">100 000 QUBITS REQUIS</span></p>
-            <div id="current-status" style="opacity:0.3; font-size: 11px;">0</div>
-        </div>
+    <div id="gate">
+        <div class="gate-text">ELITE_SYSTEM_CHECK</div>
+        <div id="gate-msg" class="gate-status">VÉRIFICATION DU PRESTIGE...</div>
     </div>
 
     <div id="ui">
-        <div class="prestige-tag">PRESTIGE_X2_MULTIPLIER</div>
+        <div style="font-size: 10px; letter-spacing: 10px; color: #ffd700; margin-bottom: 15px;">SUPERNOVA_PROTOCOL</div>
         <div class="score-big" id="score">0</div>
-        <div class="bank-val"><span id="bank">0</span> <small style="font-size: 10px;">Q</small></div>
+        <div class="vault-status">VAULT: <span id="bank-val">0</span> Q</div>
     </div>
 
     <div id="death-screen">
-        <div style="color: #ffd700; letter-spacing: 10px; font-size: 14px; margin-bottom: 20px;">VAULT_SECURED</div>
-        <div style="font-size: 120px; font-weight: 900; margin-bottom: 40px;" id="final-score-val">0</div>
-        <button class="btn-restart" onclick="location.reload()">Reset Session</button>
+        <div style="letter-spacing: 20px; color: #ff0055; font-size: 12px; margin-bottom: 20px;">SYSTEM_CRASH</div>
+        <div id="final-score" class="final-score">0</div>
+        <button class="restart-btn" onclick="location.reload()">RE-INITIALIZE</button>
     </div>
 
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-    </script>
+    <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
 
     <script type="module">
         import * as THREE from 'three';
 
-        const ACCESS_COST = 100000;
         const KEY = 'qubits_prestige_v2';
+        const ESSENTIAL_URL = "https://clebinet.github.io/cube-jumper-essential";
+        const THRESHOLD = 100000;
+        
         let bank = parseInt(localStorage.getItem(KEY)) || 0;
 
-        if (bank >= ACCESS_COST) {
-            document.getElementById('premium-gate').style.display = 'none';
-            document.getElementById('ui').style.display = 'block';
-            startEliteWorld();
+        // --- LA BARRIÈRE DE PRESTIGE ---
+        if (bank < THRESHOLD) {
+            document.getElementById('gate-msg').innerText = "ACCÈS REFUSÉ";
+            document.getElementById('gate-msg').style.color = "#ff0055";
+            setTimeout(() => { window.location.href = ESSENTIAL_URL; }, 2000);
         } else {
-            document.getElementById('current-status').innerText = bank.toLocaleString() + " / 100 000";
+            // Si autorisé, on lance le moteur après un court délai de "chargement"
+            setTimeout(() => {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('ui').style.display = 'block';
+                startEliteEngine();
+            }, 1500);
         }
 
-        function startEliteWorld() {
+        function startEliteEngine() {
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 4, 10);
+            scene.fog = new THREE.Fog(0x000000, 10, 60);
+
+            const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 12);
 
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // GRILLE CYBER AVEC LUMIÈRE AMBIANTE
-            const grid = new THREE.GridHelper(1000, 150, 0x00e5ff, 0x050505);
+            // Sol Miroir
+            const floor = new THREE.Mesh(
+                new THREE.PlaneGeometry(500, 500),
+                new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 1, roughness: 0 })
+            );
+            floor.rotation.x = -Math.PI / 2;
+            scene.add(floor);
+
+            // Grille Néon
+            const grid = new THREE.GridHelper(500, 100, 0x00ffff, 0x002222);
+            grid.material.transparent = true;
+            grid.material.opacity = 1.0;
             scene.add(grid);
 
-            // JOUEUR PRESTIGE
-            const player = new THREE.Mesh(
-                new THREE.BoxGeometry(0.8, 0.8, 0.8),
-                new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x00e5ff, emissiveIntensity: 10 })
-            );
-            player.position.y = 0.4;
-            scene.add(player);
+            // Joueur & Ennemi
+            const player = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.9), new THREE.MeshStandardMaterial({ color: 0x0, emissive: 0x00e5ff, emissiveIntensity: 35 }));
+            player.position.y = 0.45; scene.add(player);
 
-            // OBSTACLE LASER
-            const enemy = new THREE.Mesh(
-                new THREE.BoxGeometry(3, 5, 0.5),
-                new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xff0055, emissiveIntensity: 10 })
-            );
-            enemy.position.z = -80;
-            scene.add(enemy);
+            const enemy = new THREE.Mesh(new THREE.BoxGeometry(8, 0.05, 0.1), new THREE.MeshStandardMaterial({ color: 0x0, emissive: 0xff0055, emissiveIntensity: 60 }));
+            enemy.position.z = -120; scene.add(enemy);
 
-            const light = new THREE.PointLight(0x00e5ff, 100, 30);
-            scene.add(light);
+            const light = new THREE.PointLight(0x00e5ff, 400, 60); scene.add(light);
 
-            let score = 0, speed = 1.3, isDead = false, jumping = false, jumpVel = 0;
-            const gravity = -0.04;
+            let score = 0, speed = 2.8, isDead = false, jumping = false, jumpVel = 0;
+            const pBox = new THREE.Box3();
+            const eBox = new THREE.Box3();
 
+            const jump = () => { if(!jumping && !isDead) { jumping = true; jumpVel = 0.9; }};
             window.addEventListener('keydown', (e) => { if(e.code === 'Space') jump(); });
             window.addEventListener('touchstart', jump);
-
-            function jump() { if (!jumping && !isDead) { jumping = true; jumpVel = 0.65; } }
 
             function animate() {
                 if(isDead) return;
                 requestAnimationFrame(animate);
 
-                // AVANTAGE PREMIUM : Slow motion en l'air
-                let timeScale = jumping ? 0.7 : 1.0; 
-
                 if (jumping) {
-                    player.position.y += jumpVel * timeScale;
-                    jumpVel += gravity * timeScale;
-                    if (player.position.y <= 0.4) { player.position.y = 0.4; jumping = false; }
+                    player.position.y += jumpVel; jumpVel -= 0.065;
+                    if (player.position.y <= 0.45) { player.position.y = 0.45; jumping = false; }
                 }
 
-                enemy.position.z += speed * timeScale;
-                grid.position.z += speed * timeScale;
-                if(grid.position.z > 6.66) grid.position.z = 0;
+                enemy.position.z += speed;
+                grid.position.z += speed;
+                if(grid.position.z > 5) grid.position.z = 0;
 
-                if (enemy.position.z > 15) {
-                    enemy.position.z = -120;
-                    score++;
-                    bank += 100; // GAIN ÉNORME
+                if (enemy.position.z > 30) {
+                    enemy.position.z = -160;
+                    score++; bank += 250;
                     localStorage.setItem(KEY, bank);
                     document.getElementById('score').innerText = score;
-                    document.getElementById('bank').innerText = bank.toLocaleString();
-                    
-                    // EFFET VISUEL : Flash de réussite
-                    light.intensity = 200;
-                    setTimeout(() => light.intensity = 100, 100);
+                    document.getElementById('bank-val').innerText = bank.toLocaleString();
+                    speed += 0.06;
                 }
 
-                // COLLISION
-                if (Math.abs(player.position.z - enemy.position.z) < 1.0 && player.position.y < 4.5) {
+                pBox.setFromObject(player);
+                eBox.setFromObject(enemy);
+                eBox.expandByVector(new THREE.Vector3(0, 0, speed * 2)); 
+
+                if (pBox.intersectsBox(eBox)) {
                     isDead = true;
-                    document.getElementById('final-score-val').innerText = score;
+                    document.getElementById('ui').style.display = 'none';
+                    document.getElementById('final-score').innerText = score;
                     document.getElementById('death-screen').style.display = 'flex';
                 }
 
-                light.position.copy(player.position).y += 2;
+                light.position.copy(player.position).y += 3;
                 renderer.render(scene, camera);
             }
             animate();
